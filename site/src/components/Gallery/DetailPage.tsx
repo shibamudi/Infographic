@@ -4,15 +4,15 @@ import {
   ArrowLeft,
   Check,
   Copy,
-  Maximize2,
   RotateCcw,
 } from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
-import {Infographic} from '../Infographic';
+import {Infographic, type InfographicHandle} from '../Infographic';
 import {CodeEditor} from '../MDX/CodeEditor';
 import {TEMPLATES} from './templates';
+import {IconDownload} from 'components/Icon/IconDownload';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -28,6 +28,10 @@ const TRANSLATIONS = {
     errors: {
       render: (msg: string) => `渲染错误：${msg}`,
     },
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG 已导出',
+    svgExported: 'SVG 已导出',
   },
   'en-US': {
     back: 'Back to Gallery',
@@ -42,10 +46,15 @@ const TRANSLATIONS = {
     errors: {
       render: (msg: string) => `Render Error: ${msg}`,
     },
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG exported',
+    svgExported: 'SVG exported',
   },
 };
 
 export default function DetailPage({templateId}: {templateId?: string}) {
+  const infographicRef = useRef<InfographicHandle | null>(null);
   const router = useRouter();
   const template = templateId || router.query.template;
 
@@ -84,6 +93,14 @@ export default function DetailPage({templateId}: {templateId?: string}) {
     setError(err ? detailTexts.errors.render(err.message) : null);
   };
 
+  const handleExportPNG = async () => {
+    await infographicRef.current?.exportPNG();
+  };
+
+  const handleExportSVG = async () => {
+    await infographicRef.current?.exportSVG();
+  };
+
   return (
     <div className="h-[calc(100vh-64px)] w-full bg-wash dark:bg-gray-95 flex overflow-hidden text-primary dark:text-primary-dark">
       {/* Left Panel: Canvas */}
@@ -109,9 +126,20 @@ export default function DetailPage({templateId}: {templateId?: string}) {
           <div
             className="relative bg-card dark:bg-card-dark rounded-2xl shadow-nav dark:shadow-nav-dark border border-primary/10 dark:border-primary-dark/10 overflow-hidden transition-all duration-300"
             style={{width: '100%', height: '100%'}}>
-            <div className="absolute top-4 right-4 opacity-0 hover:opacity-100 transition-opacity z-20">
-              <button className="p-2 bg-card/90 dark:bg-card-dark/90 backdrop-blur rounded-lg shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10 text-secondary dark:text-secondary-dark hover:text-primary hover:dark:text-primary-dark">
-                <Maximize2 className="w-4 h-4" />
+            <div className="absolute top-4 right-4 z-20 flex gap-2">
+              <button
+                onClick={handleExportPNG}
+                className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded transition-all"
+                aria-label={detailTexts.pngButton}>
+                <IconDownload className="w-3.5 h-3.5" />
+                {detailTexts.pngButton}
+              </button>
+              <button
+                onClick={handleExportSVG}
+                className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 rounded transition-all"
+                aria-label={detailTexts.svgButton}>
+                <IconDownload className="w-3.5 h-3.5" />
+                {detailTexts.svgButton}
               </button>
             </div>
 
@@ -121,6 +149,7 @@ export default function DetailPage({templateId}: {templateId?: string}) {
               style={{minHeight: '600px'}}>
               {code ? (
                 <Infographic
+                  ref={infographicRef}
                   init={{
                     width: '100%',
                     height: '100%',
