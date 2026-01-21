@@ -7,6 +7,7 @@ import {CodeEditor} from 'components/MDX/CodeEditor';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useCallback, useMemo, useRef} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
+import {IconDownload} from 'components/Icon/IconDownload';
 
 type TabKey = 'preview' | 'syntax';
 
@@ -18,6 +19,10 @@ const TRANSLATIONS = {
     generating: '生成中...',
     empty: '输入提示语以生成信息图语法',
     copyImageHint: '已复制图片',
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG 已导出',
+    svgExported: 'SVG 已导出',
   },
   'en-US': {
     tabPreview: 'Preview',
@@ -26,6 +31,10 @@ const TRANSLATIONS = {
     generating: 'Generating...',
     empty: 'Enter a prompt to generate infographic syntax',
     copyImageHint: 'Image copied',
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG exported',
+    svgExported: 'SVG exported',
   },
 };
 
@@ -42,6 +51,7 @@ export function PreviewPanel({
   onCopy,
   onRenderError,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
+  onExportSuccess,
 }: {
   activeTab: TabKey;
   onTabChange: (tab: TabKey) => void;
@@ -55,6 +65,7 @@ export function PreviewPanel({
   onCopy?: (hint: string) => void;
   onRenderError?: (message: string | null) => void;
   panelClassName?: string;
+  onExportSuccess: (message: string) => void;
 }) {
   const infographicRef = useRef<InfographicHandle | null>(null);
   const fallbackValue = fallbackSyntax || '';
@@ -76,6 +87,16 @@ export function PreviewPanel({
       onCopy(previewTexts.copyImageHint);
     }
   }, [onCopy, previewTexts.copyImageHint]);
+
+  const handleExportPNG = async () => {
+    await infographicRef.current?.exportPNG();
+    onExportSuccess(previewTexts.pngExported);
+  };
+
+  const handleExportSVG = async () => {
+    await infographicRef.current?.exportSVG();
+    onExportSuccess(previewTexts.svgExported);
+  };
 
   const navButtons = useMemo(
     () => (
@@ -182,14 +203,32 @@ export function PreviewPanel({
                   </AnimatePresence>
                   <div className="relative h-full w-full p-4 lg:p-6">
                     {previewValue ? (
-                      <Infographic
-                        ref={infographicRef}
-                        init={{editable: true}}
-                        options={previewValue}
-                        onError={(err) =>
-                          onRenderError?.(err ? err.message : null)
-                        }
-                      />
+                      <div className='h-full w-full'>
+                        <div className="flex gap-2 absolute top-4 right-4 z-20">
+                          <button
+                            onClick={handleExportPNG}
+                            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded transition-all"
+                            aria-label={previewTexts.pngButton}>
+                            <IconDownload className="w-3.5 h-3.5" />
+                            {previewTexts.pngButton}
+                          </button>
+                          <button
+                            onClick={handleExportSVG}
+                            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 rounded transition-all"
+                            aria-label={previewTexts.svgButton}>
+                            <IconDownload className="w-3.5 h-3.5" />
+                            {previewTexts.svgButton}
+                          </button>
+                        </div>
+                        <Infographic
+                          ref={infographicRef}
+                          init={{editable: true}}
+                          options={previewValue}
+                          onError={(err) =>
+                            onRenderError?.(err ? err.message : null)
+                          }
+                        />
+                      </div>
                     ) : (
                       <div className="h-full w-full flex items-center justify-center rounded-xl border border-dashed border-border dark:border-border-dark">
                         <p className="text-sm text-tertiary dark:text-tertiary-dark">

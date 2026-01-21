@@ -1,7 +1,5 @@
 import {InfographicOptions} from '@antv/infographic';
 import {CopyToast, useCopyToast} from 'components/CopyToast';
-import {Page} from 'components/Layout/Page';
-import CodeBlock from 'components/MDX/CodeBlock';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useRef, useState} from 'react';
@@ -24,51 +22,6 @@ const TRANSLATIONS = {
       highlight: 'Infographic',
       description:
         '将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI 会理解语境并为你生成相匹配的信息图方案',
-    },
-    workspaceLabel: 'AI 工作区',
-    skills: {
-      title: 'Skills 集成',
-      description:
-        '以下 skills 帮助你生成语法、结构与模板，适配 Codex / Claude Code。',
-      items: [
-        {
-          name: 'infographic-creator',
-          desc: '创建渲染信息图的 HTML 文件',
-        },
-        {
-          name: 'infographic-syntax-creator',
-          desc: '根据描述生成信息图语法',
-        },
-        {
-          name: 'infographic-structure-creator',
-          desc: '生成自定义的结构设计',
-        },
-        {
-          name: 'infographic-item-creator',
-          desc: '生成自定义的数据项设计',
-        },
-        {
-          name: 'infographic-template-updater',
-          desc: '（开发者使用）更新信息图模板库',
-        },
-      ],
-      usageTitle: '使用方式',
-      claudeTitle: 'Claude Code',
-      claudeCommands: `set -e
-
-VERSION=0.2.4 # 替换为最新版本号，例如 0.2.4
-BASE_URL=https://github.com/antvis/Infographic/releases/download
-mkdir -p .claude/skills
-
-curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-unzip -q -o skills.zip -d .claude/skills
-rm -f skills.zip
-`,
-      codexTitle: 'Codex',
-      codexCommands: `# 将 <SKILL> 替换为需要安装的 skill 名称，例如 infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
-`,
     },
     preview: {
       tabPreview: '预览',
@@ -112,50 +65,6 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/.skills
       highlight: 'Infographic',
       description:
         'Paste content from writing, reporting, or any text task and AI will understand the context and output an infographic plan.',
-    },
-    workspaceLabel: 'AI Workspace',
-    skills: {
-      title: 'Skills Integration',
-      description:
-        'These skills help you generate syntax, structures, and templates for infographics.',
-      items: [
-        {
-          name: 'infographic-creator',
-          desc: 'Create an HTML file that renders an infographic',
-        },
-        {
-          name: 'infographic-syntax-creator',
-          desc: 'Generate infographic syntax from descriptions',
-        },
-        {
-          name: 'infographic-structure-creator',
-          desc: 'Generate custom structure designs',
-        },
-        {
-          name: 'infographic-item-creator',
-          desc: 'Generate custom item designs',
-        },
-        {
-          name: 'infographic-template-updater',
-          desc: 'Update the template library (for developers)',
-        },
-      ],
-      usageTitle: 'How to use',
-      claudeTitle: 'Claude Code',
-      claudeCommands: `set -e
-
-VERSION=0.2.4 # Replace with the latest tag, e.g. 0.2.4
-BASE_URL=https://github.com/antvis/Infographic/releases/download
-mkdir -p .claude/skills
-
-curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-unzip -q -o skills.zip -d .claude/skills
-rm -f skills.zip`,
-      codexTitle: 'Codex',
-      codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
-`,
     },
     preview: {
       tabPreview: 'Preview',
@@ -351,12 +260,8 @@ export function AIPageContent() {
   const router = useRouter();
   const aiTexts = useLocaleBundle(TRANSLATIONS);
   const heroTexts = aiTexts.hero;
-  const workspaceLabel = aiTexts.workspaceLabel;
-  const skillsSection = aiTexts.skills;
-  const notifications = aiTexts.notifications;
   const examplePrompts = aiTexts.examples;
   const fallbackSyntax = aiTexts.fallbackSyntax;
-  const metaTitle = aiTexts.metaTitle;
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
@@ -716,16 +621,6 @@ export function AIPageContent() {
     [showCopyHint]
   );
 
-  const handleCopySkill = useCallback(
-    (name: string) => {
-      if (typeof navigator === 'undefined' || !navigator.clipboard) return;
-      void navigator.clipboard.writeText(name).then(() => {
-        showCopyHint(notifications.copySkill);
-      });
-    },
-    [notifications.copySkill, showCopyHint]
-  );
-
   const handleClear = () => {
     setHistory([]);
     setRetryingId(null);
@@ -795,16 +690,7 @@ export function AIPageContent() {
   };
 
   return (
-    <Page
-      toc={[]}
-      routeTree={{title: 'AI', path: '/ai', routes: []}}
-      meta={{title: metaTitle}}
-      section="ai"
-      topNavOptions={{
-        hideBrandWhenHeroVisible: true,
-        overlayOnHome: true,
-        heroAnchorId: 'ai-hero-anchor',
-      }}>
+    <div>
       <div className="relative isolate overflow-hidden bg-wash dark:bg-wash-dark">
         {/* Background decorations */}
         <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
@@ -841,12 +727,6 @@ export function AIPageContent() {
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.5, ease: 'easeOut', delay: 0.1}}
             className="space-y-5">
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-tertiary dark:text-tertiary-dark">
-                {workspaceLabel}
-              </p>
-            </div>
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ChatPanel
                 prompt={prompt}
@@ -878,63 +758,9 @@ export function AIPageContent() {
                   panelClassName={PANEL_HEIGHT_CLASS}
                   onCopy={handleCopyHint}
                   onRenderError={setPreviewError}
+                  onExportSuccess={showCopyHint}
                 />
               }
-            </div>
-          </motion.section>
-
-          <motion.section
-            initial={{opacity: 0, y: 12}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.5, ease: 'easeOut', delay: 0.2}}
-            className="mt-6 rounded-2xl border border-border dark:border-border-dark bg-card/70 dark:bg-card-dark/80 backdrop-blur-sm p-5 lg:p-6 space-y-4">
-            <div className="space-y-2">
-              <p className="text-base font-semibold text-primary dark:text-primary-dark">
-                {skillsSection.title}
-              </p>
-              <p className="text-sm text-secondary dark:text-secondary-dark leading-relaxed">
-                {skillsSection.description}
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {skillsSection.items.map((item) => (
-                <div
-                  key={item.name}
-                  className="rounded-xl border border-border/70 dark:border-border-dark/70 bg-wash/70 dark:bg-wash-dark/70 p-3">
-                  <button
-                    type="button"
-                    onClick={() => handleCopySkill(item.name)}
-                    className="text-xs font-mono text-link dark:text-link-dark mb-1 inline-flex items-center gap-1 hover:underline">
-                    {item.name}
-                  </button>
-                  <p className="text-sm text-secondary dark:text-secondary-dark leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="space-y-3">
-              <p className="text-sm font-semibold text-primary dark:text-primary-dark">
-                {skillsSection.usageTitle}
-              </p>
-              <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
-                <CodeBlock
-                  noMargin
-                  label={skillsSection.claudeTitle}
-                  className="lg:self-stretch">
-                  <div className="language-bash">
-                    {skillsSection.claudeCommands}
-                  </div>
-                </CodeBlock>
-                <CodeBlock
-                  noMargin
-                  label={skillsSection.codexTitle}
-                  className="lg:self-stretch">
-                  <div className="language-bash">
-                    {skillsSection.codexCommands}
-                  </div>
-                </CodeBlock>
-              </div>
             </div>
           </motion.section>
 
@@ -956,7 +782,7 @@ export function AIPageContent() {
           setIsConfigOpen(false);
         }}
       />
-    </Page>
+    </div>
   );
 }
 
