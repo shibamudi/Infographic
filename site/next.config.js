@@ -4,7 +4,7 @@
 const nextConfig = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   reactStrictMode: true,
-  output: 'export',
+  // output: 'export', // �dY��Mn/(API�1/
   images: {
     // Static export needs unoptimized images
     unoptimized: true,

@@ -7,7 +7,7 @@ export const STORAGE_KEYS = {
 };
 
 export const DEFAULT_CONFIG: AIConfig = {
-  provider: 'antv',
+  provider: 'sdu',
   baseUrl: '',
   model: '',
   apiKey: '',
@@ -19,6 +19,12 @@ export const PROVIDER_OPTIONS: Array<{
   baseUrl: string;
   logo?: string;
 }> = [
+  {
+    value: 'sdu',
+    label: 'SDU',
+    baseUrl: '',
+    logo: '/images/antv.svg',
+  },
   {
     value: 'antv',
     label: 'AntV',

@@ -89,7 +89,7 @@ export async function sendMessageStream(
   onError: (error: Error) => void
 ) {
   try {
-    if (config.provider === 'antv' || !config.apiKey) {
+    if (config.provider === 'antv' || (config.provider !== 'sdu' && !config.apiKey)) {
       const fallbackText = await callFallback(messages);
       if (fallbackText) {
         onChunk(fallbackText);
@@ -100,7 +100,7 @@ export async function sendMessageStream(
       return;
     }
 
-    const stream = await callAI(config, messages, true);
+    const stream = await (config.provider === 'sdu' ? callSDUAIStream(messages) : callAI(config, messages, true));
     if (!stream) {
       onError(new Error('Failed to get streaming response'));
       return;
@@ -141,6 +141,32 @@ export async function sendMessageStream(
         ? error
         : new Error('Failed to get streaming response')
     );
+  }
+}
+
+async function callSDUAIStream(messages: ChatPayloadMessage[]): Promise<any> {
+  try {
+    const messagesWithSystem = attachSystemPrompt(messages);
+    // 调用后端代理接口，而不是直接调用SDU API
+    const response = await fetch('/api/sdu-proxy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: messagesWithSystem,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return response.body;
+  } catch (error) {
+    console.warn('SDU AI call failed:', error);
+    return null;
   }
 }
 
@@ -405,6 +431,7 @@ async function fetchGoogleModels(baseURL: string, apiKey: string) {
 
 function extractContentFromResponse(provider: AIProvider, data: any): string {
   switch (provider) {
+    case 'sdu':
     case 'openai':
     case 'deepseek':
     case 'xai':

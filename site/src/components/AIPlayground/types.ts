@@ -8,6 +8,7 @@ export type ChatMessage = {
 };
 
 export type AIProvider =
+  | 'sdu'
   | 'antv'
   | 'openai'
   | 'anthropic'

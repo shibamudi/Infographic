@@ -11,6 +11,7 @@ const TRANSLATIONS = {
     title: '配置模型服务',
     provider: '提供商',
     providerPlaceholder: '选择提供商',
+    presetNoticeSDU: '正在使用山东大学提供的接口服务，无需额外配置。',
     presetNotice: '正在使用 AntV 内置服务，无需额外配置。',
     baseUrl: 'Base URL',
     apiKey: 'API Key',
@@ -26,6 +27,7 @@ const TRANSLATIONS = {
     title: 'Configure Model Service',
     provider: 'Provider',
     providerPlaceholder: 'Select a provider',
+    presetNoticeSDU: 'Using Shandong University provided interface service, no setup required.',
     presetNotice: 'Using AntV built-in service, no setup required.',
     baseUrl: 'Base URL',
     apiKey: 'API Key',
@@ -59,6 +61,7 @@ export function ConfigPanel({
   );
   const [loadingModels, setLoadingModels] = useState(false);
   const isAntv = draft.provider === 'antv';
+  const isSDU = draft.provider === 'sdu';
   const configTexts = useLocaleBundle(TRANSLATIONS);
 
   const handlePresetSelect = (next: string) => {
@@ -98,7 +101,7 @@ export function ConfigPanel({
 
   useEffect(() => {
     if (!open) return;
-    if (isAntv || !draft.baseUrl || !draft.apiKey) {
+    if (isAntv || isSDU || !draft.baseUrl || !draft.apiKey) {
       setModels(draft.model ? [draft.model] : []);
       setLoadingModels(false);
       return;
@@ -124,7 +127,7 @@ export function ConfigPanel({
     return () => {
       cancelled = true;
     };
-  }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model, isAntv]);
+  }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model, isAntv, isSDU]);
 
   return (
     <Modal
@@ -170,7 +173,13 @@ export function ConfigPanel({
             </Select>
           </div>
 
-          {isAntv ? (
+          { isSDU ? (
+            <div className="space-y-2 text-base rounded-xl border border-dashed border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3">
+              <p className="text-sm text-secondary dark:text-secondary-dark">
+                {configTexts.presetNoticeSDU}
+              </p>
+            </div>
+          ) : (isAntv ? (
             <div className="space-y-2 text-base rounded-xl border border-dashed border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3">
               <p className="text-sm text-secondary dark:text-secondary-dark">
                 {configTexts.presetNotice}
@@ -235,7 +244,7 @@ export function ConfigPanel({
                 ) : null}
               </div>
             </>
-          )}
+          ))}
         </div>
 
         <div className="flex items-center gap-3">
