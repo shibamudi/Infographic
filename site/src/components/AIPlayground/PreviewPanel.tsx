@@ -204,22 +204,25 @@ export function PreviewPanel({
                   <div className="relative h-full w-full p-4 lg:p-6">
                     {previewValue ? (
                       <div className='h-full w-full'>
-                        <div className="flex gap-2 absolute top-4 right-4 z-20">
-                          <button
-                            onClick={handleExportPNG}
-                            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded transition-all"
-                            aria-label={previewTexts.pngButton}>
-                            <IconDownload className="w-3.5 h-3.5" />
-                            {previewTexts.pngButton}
-                          </button>
-                          <button
-                            onClick={handleExportSVG}
-                            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 rounded transition-all"
-                            aria-label={previewTexts.svgButton}>
-                            <IconDownload className="w-3.5 h-3.5" />
-                            {previewTexts.svgButton}
-                          </button>
-                        </div>
+                        { !isGenerating && (
+                          <div className="flex gap-2 absolute top-4 right-4 z-20">
+                            <button
+                              onClick={handleExportPNG}
+                              className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded transition-all"
+                              aria-label={previewTexts.pngButton}>
+                              <IconDownload className="w-3.5 h-3.5" />
+                              {previewTexts.pngButton}
+                            </button>
+                            <button
+                              onClick={handleExportSVG}
+                              className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 rounded transition-all"
+                              aria-label={previewTexts.svgButton}>
+                              <IconDownload className="w-3.5 h-3.5" />
+                              {previewTexts.svgButton}
+                            </button>
+                          </div>
+                        )}
+                        
                         <Infographic
                           ref={infographicRef}
                           init={{editable: true}}
