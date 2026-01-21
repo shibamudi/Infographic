@@ -6,7 +6,6 @@ import ButtonLink from 'components/ButtonLink';
 import {finishedTranslations} from 'utils/finishedTranslations';
 import {IconNavArrow} from '../Icon/IconNavArrow';
 import BlogCard from './BlogCard';
-import CodeBlock from './CodeBlock';
 import {ConsoleBlock, ConsoleBlockMulti, ConsoleLogLine} from './ConsoleBlock';
 import ExpandableCallout from './ExpandableCallout';
 import ExpandableExample from './ExpandableExample';
@@ -15,7 +14,6 @@ import InlineCode from './InlineCode';
 import Intro from './Intro';
 import {LanguagesContext} from './LanguagesContext';
 import Link from './Link';
-import {PackageImport} from './PackageImport';
 import type {Toc, TocItem} from './TocContext';
 import {TocContext} from './TocContext';
 
@@ -230,7 +228,6 @@ export const MDXComponents = {
   img: Image,
   BlogCard,
   code: InlineCode,
-  pre: CodeBlock,
   ConsoleBlock,
   ConsoleBlockMulti,
   ConsoleLogLine,
@@ -256,7 +253,6 @@ export const MDXComponents = {
   Math,
   MathI,
   Note,
-  PackageImport,
   ErrorDecoder,
 };
 

@@ -4,7 +4,6 @@ type ThemeMode = 'light' | 'dark';
 
 declare global {
   interface Window {
-    // @ts-expect-error ignore
     __theme?: ThemeMode;
   }
 }
