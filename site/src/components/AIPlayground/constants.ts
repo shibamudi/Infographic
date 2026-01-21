@@ -21,9 +21,9 @@ export const PROVIDER_OPTIONS: Array<{
 }> = [
   {
     value: 'sdu',
-    label: 'SDU',
+    label: '山东大学 x Qwen3',
     baseUrl: '',
-    logo: '/images/antv.svg',
+    logo: '/images/sdu.jpg',
   },
   {
     value: 'antv',
