@@ -102,7 +102,7 @@ export default function DetailPage({templateId}: {templateId?: string}) {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full bg-wash dark:bg-gray-95 flex overflow-hidden text-primary dark:text-primary-dark">
+    <div className="h-full w-full bg-wash dark:bg-gray-95 flex overflow-hidden text-primary dark:text-primary-dark">
       {/* Left Panel: Canvas */}
       <div className="flex-1 relative bg-gray-10/60 dark:bg-gray-95 flex flex-col overflow-hidden">
         <motion.button
