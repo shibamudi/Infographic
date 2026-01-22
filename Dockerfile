@@ -78,7 +78,6 @@ ENV NODE_ENV=production \
 
 # 复制构建产物
 COPY --from=site-builder /app/site/.next ./site/.next
-COPY --from=site-builder /app/site/out ./site/out
 COPY --from=site-builder /app/site/public ./site/public
 COPY --from=site-builder /app/site/node_modules ./site/node_modules
 COPY --from=site-builder /app/site/package.json ./site/package.json
