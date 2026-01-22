@@ -1,0 +1,44 @@
+services:
+  site:
+    build: .
+    # 不直接暴露端口，通过Traefik代理
+    expose:
+      - '3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - BASE_PATH=/infographic
+    env_file:
+      - ./site/.env.local
+    restart: unless-stopped
+    networks:
+      - shared
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'wget',
+          '--no-verbose',
+          '--tries=1',
+          '--spider',
+          'http://localhost:3000/infographic/',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      # Traefik配置
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.infographic.rule=PathPrefix(`/infographic`)'
+
+      # 中间件：认证、移除前缀并启用压缩
+      - 'traefik.http.middlewares.infographic-stripprefix.stripprefix.prefixes=/infographic'
+      - 'traefik.http.middlewares.infographic-compress.compress=true'
+      - 'traefik.http.routers.infographic.middlewares=cas-auth,infographic-stripprefix,infographic-compress'
+      # 服务配置
+      - 'traefik.http.services.infographic.loadbalancer.server.port=3000'
+
+networks:
+  shared:
+    external: true

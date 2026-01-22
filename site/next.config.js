@@ -4,7 +4,10 @@
 const nextConfig = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   reactStrictMode: true,
-  // output: 'export', // �dY��Mn/(API�1/
+  // 子路径部署配置
+  basePath: process.env.BASE_PATH || '',
+  assetPrefix: process.env.BASE_PATH || '',
+  // output: 'export', // 静态导出时使用
   images: {
     // Static export needs unoptimized images
     unoptimized: true,
