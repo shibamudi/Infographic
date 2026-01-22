@@ -6,7 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   // 子路径部署配置
   basePath: process.env.BASE_PATH || '',
-  assetPrefix: process.env.BASE_PATH || '',
+  assetPrefix: process.env.BASE_PATH ? `${process.env.BASE_PATH}/_next` : '',
   // output: 'export', // 静态导出时使用
   images: {
     // Static export needs unoptimized images
