@@ -34,6 +34,8 @@ FROM base AS site-builder
 # 接收构建参数
 ARG BASE_PATH
 ENV BASE_PATH=${BASE_PATH}
+ARG NEXT_PUBLIC_BASE_PATH
+ENV NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
 
 # 复制主库构建产物和package.json
 COPY --from=builder /app/lib ./lib
@@ -53,7 +55,7 @@ RUN cd site && pnpm install --frozen-lockfile
 COPY site/ ./site/
 
 # 构建site应用
-RUN cd site && pnpm build
+RUN cd site && pnpm build-prod
 
 # 第三阶段：生产环境运行
 FROM node:22-alpine AS runner

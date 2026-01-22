@@ -23,7 +23,8 @@
     "tsc": "tsc --noEmit",
     "start": "next start",
     "check-all": "npm-run-all prettier lint:fix tsc",
-    "deadlinks": "node scripts/deadLinkChecker.js"
+    "deadlinks": "node scripts/deadLinkChecker.js",
+    "build-prod": "next build --no-lint"
   },
   "dependencies": {
     "@antv/infographic": "file:../",

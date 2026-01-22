@@ -158,7 +158,7 @@ export function ConfigPanel({
                   <span className="inline-flex items-center gap-2">
                     {item.logo ? (
                       <Image
-                        src={process.env.BASE_PATH + item.logo}
+                        src={process.env.NEXT_PUBLIC_BASE_PATH + item.logo}
                         alt={item.label}
                         width={16}
                         height={16}

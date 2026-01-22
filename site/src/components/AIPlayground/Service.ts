@@ -148,7 +148,7 @@ async function callSDUAIStream(messages: ChatPayloadMessage[]): Promise<any> {
   try {
     const messagesWithSystem = attachSystemPrompt(messages);
     // 调用后端代理接口，而不是直接调用SDU API
-    const response = await fetch(process.env.BASE_PATH + '/api/sdu-proxy', {
+    const response = await fetch(process.env.NEXT_PUBLIC_BASE_PATH + '/api/sdu-proxy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
