@@ -1,6 +1,9 @@
 services:
   site:
-    build: .
+    build:
+      context: .
+      args:
+        BASE_PATH: /infographic
     # 不直接暴露端口，通过Traefik代理
     expose:
       - '3000'

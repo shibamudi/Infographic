@@ -31,6 +31,10 @@ RUN pnpm build
 # 第二阶段：构建site
 FROM base AS site-builder
 
+# 接收构建参数
+ARG BASE_PATH
+ENV BASE_PATH=${BASE_PATH}
+
 # 复制主库构建产物和package.json
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/esm ./esm
@@ -63,11 +67,12 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # 设置工作目录
 WORKDIR /app
 
-# 设置环境变量
+# 接收构建参数并设置环境变量
+ARG BASE_PATH
 ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0 \
-    BASE_PATH=/infographic
+    BASE_PATH=${BASE_PATH}
 
 # 复制构建产物
 COPY --from=site-builder /app/site/.next ./site/.next
@@ -78,7 +83,7 @@ COPY --from=site-builder /app/site/package.json ./site/package.json
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/infographic/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
 # 暴露端口
 EXPOSE 3000
