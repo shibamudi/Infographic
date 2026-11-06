@@ -2,7 +2,7 @@
 FROM node:22-alpine AS base
 
 # 安装pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 
 # 设置工作目录
 WORKDIR /app
@@ -64,7 +64,7 @@ FROM node:22-alpine AS runner
 RUN apk add --no-cache dumb-init
 
 # 安装pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
 
 # 设置工作目录
 WORKDIR /app
